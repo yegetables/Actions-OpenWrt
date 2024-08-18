@@ -10,15 +10,14 @@
 # See /LICENSE for more information.
 #
 
-name: X86_64 OpenWrt  UBuntu
+name: X86_64 OpenWrt  WSL
 
 on:
   repository_dispatch:
   ## Git Push 时触发编译(不要删除此行注释)
-  push:
-    branches: 
-      - new
-      - origin
+  # push:
+  #   branches: 
+  #     - main
   
   ## 定时触发编译(不要删除此行注释)
   #schedule:
@@ -32,8 +31,8 @@ on:
   workflow_dispatch:
 
 env:
-  REPO_URL: https://github.com/Lienol/openwrt
-  REPO_BRANCH: 23.05
+  REPO_URL: https://github.com/yegetables/openwrt
+  REPO_BRANCH: 23.05.4.self 
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: .config
   DIY_P1_SH: diy-part1.sh
@@ -43,7 +42,7 @@ env:
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
   # 删除无用文件以增加编译空间
-  DELETE_USELESS_FILES: true
+  DELETE_USELESS_FILES: false
   # 删除早期的 workflow 任务
   DELETE_OLD_WORKFLOW: false
   # Cache 加速编译
@@ -51,42 +50,12 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash
+    runs-on: self-hosted
 
     steps:
-    - name: "优化磁盘空间"
-      if: env.DELETE_USELESS_FILES == 'true' && !cancelled()
-      uses: "hugoalh/disk-space-optimizer-ghaction@v0.8.0"
-      with:
-        operate_sudo: "True"
-        general_include: ".+"
-        general_exclude: |-
-          ^GCC$
-          ^G\+\+$
-          Clang
-          LLVM
-        docker_include: ".+"
-        docker_prune: "True"
-        docker_clean: "True"
-        apt_prune: "True"
-        apt_clean: "True"
-        homebrew_prune: "True"
-        homebrew_clean: "True"
-        npm_prune: "True"
-        npm_clean: "True"
-        os_swap: "True"
-
-    - name: "最大化构建空间"
-      if: env.DELETE_USELESS_FILES == 'true' && !cancelled()
-      uses: easimon/maximize-build-space@master
-      with: 
-        root-reserve-mb: 2048
-        swap-size-mb: 1
-        remove-dotnet: 'true'
-        remove-android: 'true'
-        remove-haskell: 'true'
-        remove-codeql: 'true'
-        remove-docker-images: 'true'
 
     - name: "下载编译脚本"
       uses: actions/checkout@main
@@ -97,20 +66,18 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        # sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
-        # sudo docker image prune --all --force
-        sudo -E apt-get -qq update
-        sudo -E apt-get -qq install ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libpython3-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pyelftools python3-setuptools qemu-utils rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
-        sudo -E apt-get -qq autoremove --purge
-        sudo -E apt-get -qq clean
-        sudo timedatectl set-timezone "$TZ"
-
+       sudo -E apt-get -qq update
+       sudo -E apt-get -qq install ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libpython3-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pyelftools python3-setuptools qemu-utils rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
+       sudo -E apt-get -qq autoremove --purge
+       sudo -E apt-get -qq clean
+       sudo timedatectl set-timezone "$TZ"
+        
     - name: "下载op源码"
       run: |
         pwd
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt_${{ github.run_id }}
-        
+              
     - name: "加载自定义软件源feeds 执行脚本1"
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt_${{ github.run_id }}/feeds.conf.default
@@ -133,29 +100,12 @@ jobs:
         $GITHUB_WORKSPACE/$DIY_P2_SH
 
 
-    - name: "启用githubaction 高速缓存"
-      if: env.CACHE_ACCELERATE == 'true'
-      uses: klever1988/cachewrtbuild@main
-      with:
-        #是否一并缓存.ccache目录，如果你启用了ccache。这是唯一的常用参数，其他三个用于除错，一般不需要调整
-        ccache: false
-        #是否缓存工具链目录
-        toolchain: true
-        #是否跳过工具链编译
-        skip: true
-        #清空缓存
-        clean: flase
-        prefix: ${{ github.workspace }}/openwrt_${{ github.run_id }}
-
-    # - name: "设置config启用op内置缓存"
-    #   run: |
-    #     if [ "${{ env.CACHE_ACCELERATE }}" == true ]
-    #     then
-    #         echo -e "\nCONFIG_DEVEL=y\nCONFIG_CCACHE=y\n" >> openwrt_${{ github.run_id }}/.config
-    #     fi
-    # 遇到报错 ERROR: package/feeds/other/vlmcsd failed to build.
-    #  x86_64-openwrt-linux-musl-gcc: fatal error: cannot specify '-o' with '-c', '-S' or '-E' with multiple files
-    # https://github.com/cokebar/openwrt-vlmcsd/issues/30
+    - name: "设置config启用op内置缓存"
+      run: |
+        if [ "${{ env.CACHE_ACCELERATE }}" == true ]
+        then
+            echo -e "\nCONFIG_DEVEL=y\nCONFIG_CCACHE=y\n" >> openwrt_${{ github.run_id }}/.config
+        fi
 
     - name: "预下载编译软件包"
       id: package
@@ -234,11 +184,11 @@ jobs:
         retain_days: 3
         keep_minimum_runs: 2
 
-    # - name: "删除旧的release"
-    #   uses: dev-drprasad/delete-older-releases@master
-    #   if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-    #   with:
-    #     keep_latest: 3
-    #     delete_tags: true
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: "删除旧的release"
+      uses: dev-drprasad/delete-older-releases@master
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      with:
+        keep_latest: 3
+        delete_tags: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

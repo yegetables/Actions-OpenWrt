@@ -39,3 +39,22 @@ sed -i 's/root:::0:99999:7:::/root:$1$Ia9dBEx1$Pf.w.p0k5ue.E2A3w7o6N0:19950:0:99
 
 #  WIFI SSID
 sed -i 's/ssid="OpenWrt"/ssid="OpenWrt-yegatbles"/g' package/kernel/mac80211/files/lib/wifi/mac80211.sh
+
+# add plugin
+git clone https://github.com/sirpdboy/luci-app-poweroffdevice package/luci-app-poweroffdevice
+git clone https://github.com/rufengsuixing/luci-app-onliner package/luci-app-onliner
+# 未知 待测试
+git clone https://github.com/peter-tank/luci-app-autorepeater.git package/luci-app-autorepeater
+
+
+
+#git clone https://github.com/morytyann/OpenWrt-mihomo.git luci-app-mihomo
+
+# bug
+
+    # NEtwork-->luci-->bandwidthd   bug cannot find dependency bandwidthd for luci-app-bandwidthd
+    # git clone https://github.com/AlexZhuo/luci-app-bandwidthd.git package/luci-app-bandwidthd
+    # luci-app-bandwidthd失败 cannot find dependency bandwidthd for luci-app-bandwidthd
+    # https://github.com/NethServer/bandwidthd
+    # https://github.com/AlexZhuo/luci-app-bandwidthd?tab=readme-ov-file
+

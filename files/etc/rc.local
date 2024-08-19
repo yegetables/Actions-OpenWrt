@@ -1,10 +1,13 @@
 # Put your custom commands here that should be executed once
 # the system init finished. By default this file does nothing.
 
+# opkg mirror
 sed -i 's_https\?://downloads.openwrt.org_https://mirrors.cernet.edu.cn/openwrt_' /etc/opkg/distfeeds.conf
+
+# theme
 sed -i "s|mediaurlbase '/luci-static/bootstrap'|mediaurlbase '/luci-static/argon'|g" /etc/config/luci
 
-line1="yegetbles build %D %V %C"
-sed -i "s/%D %V %C/$(echo $line1 | sed 's/[\/&]/\\&/g')/g" /etc/openwrt_release
+# description
+sed -i "s/DISTRIB_DESCRIPTION='OpenWrt 23.05'/DISTRIB_DESCRIPTION='OpenWrt 23.05 build by yegetables $(date +'%Y.%m.%d')'/" /etc/openwrt_release
 
 exit 0

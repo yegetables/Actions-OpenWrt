@@ -132,30 +132,11 @@ jobs:
         cd openwrt_${{ github.run_id }}
         $GITHUB_WORKSPACE/$DIY_P2_SH
 
-
     - name: "启用githubaction 高速缓存"
       if: env.CACHE_ACCELERATE == 'true'
       uses: klever1988/cachewrtbuild@main
       with:
-        #是否一并缓存.ccache目录，如果你启用了ccache。这是唯一的常用参数，其他三个用于除错，一般不需要调整
-        ccache: false
-        #是否缓存工具链目录
-        toolchain: true
-        #是否跳过工具链编译
-        skip: true
-        #清空缓存
-        clean: flase
         prefix: ${{ github.workspace }}/openwrt_${{ github.run_id }}
-
-    # - name: "设置config启用op内置缓存"
-    #   run: |
-    #     if [ "${{ env.CACHE_ACCELERATE }}" == true ]
-    #     then
-    #         echo -e "\nCONFIG_DEVEL=y\nCONFIG_CCACHE=y\n" >> openwrt_${{ github.run_id }}/.config
-    #     fi
-    # 遇到报错 ERROR: package/feeds/other/vlmcsd failed to build.
-    #  x86_64-openwrt-linux-musl-gcc: fatal error: cannot specify '-o' with '-c', '-S' or '-E' with multiple files
-    # https://github.com/cokebar/openwrt-vlmcsd/issues/30
 
     - name: "预下载编译软件包"
       id: package
@@ -163,12 +144,6 @@ jobs:
         cd openwrt_${{ github.run_id }}
         make defconfig
         make download -j8
-    
-    - name: "清除未下载的软件包"
-      run: |
-        cd openwrt_${{ github.run_id }}
-        find dl -size -1024c -exec ls -l {} \;
-        find dl -size -1024c -exec rm -f {} \;
 
     - name: "正式编译固件"
       id: compile

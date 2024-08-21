@@ -10,4 +10,6 @@ sed -i "s|mediaurlbase '/luci-static/bootstrap'|mediaurlbase '/luci-static/argon
 # description
 sed -i "s/DISTRIB_DESCRIPTION='OpenWrt 23.05'/DISTRIB_DESCRIPTION='OpenWrt 23.05 build by yegetables $(date +'%Y.%m.%d')'/" /etc/openwrt_release
 
+#dds
+echo "address=/.yegetables.com/195.168.0.51" >> /etc/dnsmasq.conf
 exit 0

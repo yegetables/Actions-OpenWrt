@@ -46,9 +46,9 @@ git clone https://github.com/rufengsuixing/luci-app-onliner package/luci-app-onl
 # 未知 待测试
 git clone https://github.com/peter-tank/luci-app-autorepeater.git package/luci-app-autorepeater
 
+git clone https://github.com/sirpdboy/netspeedtest.git ./package/netspeedtest
 
-
-#git clone https://github.com/morytyann/OpenWrt-mihomo.git luci-app-mihomo
+#git clone https://github.com/morytyann/OpenWrt-mihomo.git package/luci-app-mihomo
 
 # bug
 

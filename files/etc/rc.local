@@ -2,7 +2,12 @@
 # the system init finished. By default this file does nothing.
 
 # opkg mirror
+sed -i '/^option check_signature/ s/^/#/' /etc/opkg.conf
 sed -i 's_https\?://downloads.openwrt.org_https://mirrors.cernet.edu.cn/openwrt_' /etc/opkg/distfeeds.conf
+sed -i '/^src\/gz openwrt_mihomo/ s/^/#/' /etc/opkg/distfeeds.conf
+sed -i 's/^src\/gz openwrt_openwrtpackage.*/src\/gz openwrt_kenzok8 https:\/\/op.dllkids.xyz\/packages\/x86_64/' /etc/opkg/distfeeds.conf
+echo "src/gz openwrt_kmod515162 https://mirror.nyist.edu.cn/openwrt/releases/23.05.4/targets/x86/64/kmods/5.15.162-1-59d1431675acc6823a33c7eb2323daeb" >>/etc/opkg/distfeeds.conf
+echo "src/gz openwrt_kmod515164 http://192.168.0.51:52440/temp-file/kmods-5.15.164/packages" >>/etc/opkg/distfeeds.conf
 
 # theme
 sed -i "s|mediaurlbase '/luci-static/bootstrap'|mediaurlbase '/luci-static/argon'|g" /etc/config/luci
@@ -10,9 +15,14 @@ sed -i "s|mediaurlbase '/luci-static/bootstrap'|mediaurlbase '/luci-static/argon
 # description
 sed -i "s/DISTRIB_DESCRIPTION='OpenWrt 23.05'/DISTRIB_DESCRIPTION='OpenWrt 23.05 build by yegetables $(date +'%Y.%m.%d')'/" /etc/openwrt_release
 
-#dns
+# dnsmasq
 echo "address=/.yegetables.com/195.168.0.51" >> /etc/dnsmasq.conf
-echo "server=/.yegetables.com/::" >> /etc/dnsmasq.conf
+echo "address=/.yegetables.com/fe80::be24:11ff:fe7e:7bd3" >> /etc/dnsmasq.conf
+#echo "server=/.yegetables.com/::" >> /etc/dnsmasq.conf
 
+
+# 可选安装
+opkg update
+opkg install luci-app-netspeedtest
 
 exit 0

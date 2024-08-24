@@ -20,9 +20,9 @@ echo "当前脚本文件所在的路径是: $SCRIPT_DIR"
 
 
 # Modify default IP
-sed -i 's/192.168.1.1/192.168.0.201/g' package/base-files/files/bin/config_generate
-line1="				set network.\$1.gateway='192.168.0.1'"
-line2="				set network.\$1.dns='127.0.0.1 192.168.0.1 8.8.8.8'"
+sed -i 's/192.168.1.1/192.168.6.50/g' package/base-files/files/bin/config_generate
+line1="				set network.\$1.gateway='192.168.6.1'"
+line2="				set network.\$1.dns='127.0.0.1 192.168.6.1 8.8.8.8'"
 sed -i "/set network.\$1.netmask='\$netm'/a\\
 $line1\\
 $line2" package/base-files/files/bin/config_generate

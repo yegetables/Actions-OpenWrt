@@ -17,7 +17,8 @@ SCRIPT_PATH=$(readlink -f "$0")
 SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
 echo "当前脚本文件所在的路径是: $SCRIPT_DIR"
 
-
+rm -rf feeds/packages/lang/golang
+git clone https://github.com/sbwml/packages_lang_golang -b 23.x feeds/packages/lang/golang
 
 # Modify default IP
 sed -i 's/192.168.1.1/192.168.6.50/g' package/base-files/files/bin/config_generate

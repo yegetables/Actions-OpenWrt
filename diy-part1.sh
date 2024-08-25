@@ -30,6 +30,6 @@ echo "src-git mihomo https://github.com/morytyann/OpenWrt-mihomo.git;main" >> fe
 #echo '#src-git kenzo https://github.com/kenzok8/openwrt-packages' >>feeds.conf.default
 #echo '#src-git small https://github.com/kenzok8/small' >>feeds.conf.default
 
-rm -rf feeds/packages/lang/golang
-git clone https://github.com/kenzok8/golang feeds/packages/lang/golang
+#rm -rf feeds/packages/lang/golang
+#git clone https://github.com/kenzok8/golang feeds/packages/lang/golang
 

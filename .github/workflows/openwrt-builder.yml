@@ -142,7 +142,7 @@ jobs:
       id: package
       run: |
         cd openwrt_${{ github.run_id }}
-        make defconfig
+        #make defconfig
         make download -j8
 
     - name: "正式编译固件"

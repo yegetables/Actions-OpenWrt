@@ -50,7 +50,7 @@ git clone https://github.com/peter-tank/luci-app-autorepeater.git package/luci-a
 git clone https://github.com/sirpdboy/netspeedtest.git ./package/netspeedtest
 
 git clone https://github.com/brvphoenix/luci-app-wrtbwmon.git package/luci-app-wrtbwmon
-git clone https://github.com/brvphoenix/wrtbwmon package/wrtbwmon
+#git clone https://github.com/brvphoenix/wrtbwmon package/wrtbwmon
 
 #git clone https://github.com/morytyann/OpenWrt-mihomo.git package/luci-app-mihomo
 

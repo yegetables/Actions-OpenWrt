@@ -110,6 +110,18 @@ jobs:
         pwd
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt_${{ github.run_id }}
+
+    - name: "启用githubaction 高速缓存"
+      if: env.CACHE_ACCELERATE == 'true'
+      uses: klever1988/cachewrtbuild@main
+      with:
+        prefix: openwrt_${{ github.run_id }}
+        mixkey: 'x86'
+        toolchain: true
+        skip: true
+        skip_saving: false
+        clean: true
+        ccache: true
         
     - name: "加载自定义软件源feeds 执行脚本1"
       run: |
@@ -132,17 +144,6 @@ jobs:
         cd openwrt_${{ github.run_id }}
         $GITHUB_WORKSPACE/$DIY_P2_SH
 
-    - name: "启用githubaction 高速缓存"
-      if: env.CACHE_ACCELERATE == 'true'
-      uses: klever1988/cachewrtbuild@main
-      with:
-        prefix: 'openwrt_${{ github.run_id }}'
-        mixkey: 'x86'
-        toolchain: true
-        skip: true
-        skip_saving: false
-        clean: false
-        ccache: false
     - name: "预下载编译软件包"
       id: package
       run: |

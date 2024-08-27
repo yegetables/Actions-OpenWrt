@@ -38,7 +38,7 @@ env:
   CONFIG_FILE: .config
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
-  UPLOAD_BIN_DIR: false
+  UPLOAD_BIN_DIR: true
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
@@ -47,7 +47,7 @@ env:
   # 删除早期的 workflow 任务
   DELETE_OLD_WORKFLOW: false
   # Cache 加速编译
-  CACHE_ACCELERATE: false
+  CACHE_ACCELERATE: true
 
 jobs:
   build:
@@ -137,7 +137,12 @@ jobs:
       uses: klever1988/cachewrtbuild@main
       with:
         prefix: openwrt_${{ github.run_id }}
-
+        mixkey: 'x86'
+        toolchain: true
+        skip: true
+        skip_saving: false
+        clean: false
+        ccache: false
     - name: "预下载编译软件包"
       id: package
       run: |

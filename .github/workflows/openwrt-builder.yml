@@ -136,7 +136,7 @@ jobs:
       if: env.CACHE_ACCELERATE == 'true'
       uses: klever1988/cachewrtbuild@main
       with:
-        prefix: openwrt_${{ github.run_id }}
+        prefix: 'openwrt_${{ github.run_id }}'
         mixkey: 'x86'
         toolchain: true
         skip: true

@@ -120,7 +120,7 @@ jobs:
         toolchain: true
         skip: true
         skip_saving: false
-        clean: true
+        clean: false
         ccache: true
         
     - name: "加载自定义软件源feeds 执行脚本1"
